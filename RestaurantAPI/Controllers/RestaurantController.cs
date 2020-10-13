@@ -52,8 +52,46 @@ namespace RestaurantAPI.Controllers
 
             return Ok(requestedRestaurant);
         }
-        // Update
-        
-        // Delete
+        // Update | PUT api/restaurant/{id}
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IHttpActionResult> UpdateRestaurant([FromUri] int id, [FromBody] Restaurant updatedRestaurant)
+        {
+            Restaurant requestedRestaurant = await _context.Restaurants.FindAsync(id);
+
+            if (requestedRestaurant == null)
+            {
+                return NotFound();
+            }
+
+
+            // Update
+            requestedRestaurant.Name = updatedRestaurant.Name;
+            requestedRestaurant.Cuisine = updatedRestaurant.Cuisine;
+            requestedRestaurant.Hours = updatedRestaurant.Hours;
+            requestedRestaurant.Address = updatedRestaurant.Address;
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+        // Delete | DELETE api/restaurant/{id}
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IHttpActionResult> DeleteRestaurant([FromUri] int id)
+        {
+            Restaurant requestedRestaurant = await _context.Restaurants.FindAsync(id);
+
+            if (requestedRestaurant == null)
+            {
+                return NotFound();
+            }
+
+            _context.Restaurants.Remove(requestedRestaurant);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
